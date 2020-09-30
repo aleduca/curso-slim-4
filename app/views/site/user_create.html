@@ -1,0 +1,32 @@
+{% extends "site/master.html" %} {% block content %}
+
+<h2>Create</h2>
+
+{{ messages['message']['message']|message( messages['message']['alert'])|raw }}
+
+<form action="/user/store" method="post">
+  <input type="text" name="firstName" class="form-control" value="Alexandre" />
+  {{ messages['firstName']['message']|message(
+  messages['firstName']['alert'])|raw }}
+
+  <br />
+  <input type="text" name="lastName" class="form-control" value="Cardoso" />
+  {{ messages['lastName']['message']|message( messages['lastName']['alert'])|raw
+  }}
+  <br />
+  <input
+    type="text"
+    name="email"
+    class="form-control"
+    value="xandecar@hotmail.com"
+  />
+  {{ messages['email']['message']|message( messages['email']['alert'])|raw }}
+  <br />
+  <input type="password" name="password" class="form-control" value="123" />
+  {{ messages['password']['message']|message( messages['password']['alert'])|raw
+  }}
+  <br />
+  <button type="submit">Cadastrar</button>
+</form>
+
+{% endblock %}
