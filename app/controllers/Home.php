@@ -2,10 +2,9 @@
 
 namespace app\controllers;
 
-use app\classes\Flash;
 use app\database\models\User;
 
-class Home extends Base
+class Home
 {
     private $user;
 
@@ -18,12 +17,8 @@ class Home extends Base
     {
         $users = $this->user->find();
 
-        $message = Flash::get('message');
+        render('site/home', ['users' => $users, 'title' => 'Home']);
 
-        return $this->getTwig()->render($response, $this->setView('site/home'), [
-            'title' => 'Home',
-            'users' => $users,
-            'message' => $message,
-        ]);
+        return $response;
     }
 }

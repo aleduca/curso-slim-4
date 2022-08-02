@@ -1,17 +1,17 @@
-{% extends "site/master.html" %} {% block content %}
+<?php $this->layout('site/master') ?>
 
 <h2>login</h2>
+<?php echo getFlash('message'); ?>
 
-{% if logged_in %} Você já está logado {% else %}
 <form action="/login" method="post">
   <input
     type="text"
     name="email"
     class="form-control"
-    value="alecar2007@gmail.com"
+    value="xandecar@hotmail.com"
     placeholder="seu email"
   />
-  {{ messages['email']['message']|message(messages['email']['alert'])|raw }}
+  <?php echo getFlash('email'); ?>
   <br />
   <input
     type="password"
@@ -20,10 +20,7 @@
     value="123"
     placeholder="sua senha"
   />
-  {{ messages['password']['message']|message(messages['password']['alert'])|raw
-  }}
+  <?php echo getFlash('password'); ?>
 
   <button type="submit" class="btn btn-info" id="btn-create">Logar</button>
 </form>
-
-{% endif %} {% endblock %}

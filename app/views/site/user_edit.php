@@ -1,4 +1,4 @@
-{% extends "site/master.html" %} {% block content %}
+<?php $this->layout('site/master') ?>
 
 <h2>Edit</h2>
 
@@ -12,8 +12,7 @@
     class="form-control"
     value="{{ user.firstName }}"
   />
-  {{ messages['firstName']['message']|message(
-  messages['firstName']['alert'])|raw }}
+  <?php echo getFlash('firstName'); ?>
 
   <br />
   <input
@@ -22,6 +21,7 @@
     class="form-control"
     value="{{ user.lastName }}"
   />
+  <?php echo getFlash('lastName'); ?>
   {{ messages['lastName']['message']|message( messages['lastName']['alert'])|raw
   }}
   <br />
@@ -31,6 +31,7 @@
     class="form-control"
     value="{{ user.email }}"
   />
+  <?php echo getFlash('email'); ?>
   {{ messages['email']['message']|message( messages['email']['alert'])|raw }}
   <br />
   <input
@@ -39,6 +40,7 @@
     class="form-control"
     value="{{ user.password }}"
   />
+  <?php echo getFlash('password'); ?>
   {{ messages['password']['message']|message( messages['password']['alert'])|raw
   }}
   <br />

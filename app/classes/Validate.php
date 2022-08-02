@@ -10,7 +10,10 @@ class Validate
     {
         foreach ($fields as $field) {
             if (empty($_POST[$field])) {
-                $this->errors[$field] = 'O campo é obrigatório';
+                Flash::set($field, 'Esse campo é obrigatório', 'danger');
+                $this->errors[$field] = true;
+            } else {
+                Flash::set('old_' . $field, $_POST[$field]);
             }
         }
 
@@ -22,8 +25,12 @@ class Validate
         $data = $model->findBy($field, $value);
 
         if ($data) {
-            $this->errors[$field] = 'Esse email já está cadastrado no banco de dados';
+            Flash::set($field, 'Esse email já está cadastrado no banco de dados', 'danger');
+            $this->errors[$field] = true;
+        } else {
+            Flash::set('old_' . $field, $_POST[$field]);
         }
+
 
         return $this;
     }
@@ -31,13 +38,17 @@ class Validate
     public function email($email)
     {
         $validated = filter_var($email, FILTER_VALIDATE_EMAIL);
+
         if (!$validated) {
-            $this->errors['email'] = 'Email inválido';
+            Flash::set('email', 'Email inválido', 'danger');
+            $this->errors['email'] = true;
+        } else {
+            Flash::set('old_email', $email);
         }
     }
 
     public function getErrors()
     {
-        return $this->errors;
+        return !!$this->errors;
     }
 }
