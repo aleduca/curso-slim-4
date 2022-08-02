@@ -10,6 +10,6 @@ trait Connection
 
     public function __construct()
     {
-        $this->connection = Connect::connection();
+        $this->connection = Connect::getConnection();
     }
 }
