@@ -4,10 +4,9 @@ namespace app\database\builder;
 
 use Exception;
 
-class UpdateQuery extends Builder
+class DeleteQuery extends Builder
 {
     private string $table;
-    private array $data = [];
 
     public static function table(string $table)
     {
@@ -17,36 +16,21 @@ class UpdateQuery extends Builder
         return $self;
     }
 
-    public function set(array $data)
-    {
-        $this->data = $data;
-
-        return $this;
-    }
 
     private function createQuery(bool $count = false)
     {
         if (!$this->table) {
-            throw new Exception('A query precisa chamar o método table');
+            throw new Exception('A query precisa chamar o método table para deletar');
         }
 
-        if (!$this->data) {
-            throw new Exception('A query precisa de dados para atualizar');
-        }
-
-        $query = "update {$this->table} set ";
-        foreach ($this->data as $field => $value) {
-            $query .= "{$field} = :{$field},";
-            $this->binds[$field] = $value;
-        }
-
-        $query = rtrim($query, ',');
+        $query = "delete from {$this->table}";
         $query .= !empty($this->where) ? ' where ' . implode(' ', $this->where) : '';
 
         return $query;
     }
 
-    public function update()
+
+    public function delete()
     {
         $query = $this->createQuery();
 

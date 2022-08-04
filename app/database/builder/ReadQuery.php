@@ -2,18 +2,15 @@
 
 namespace app\database\builder;
 
-use app\database\Connection;
 use Exception;
 
-class ReadQuery
+class ReadQuery extends Builder
 {
     private ?string $table = null;
     private ?string $fields = null;
     private string $order;
     private string $group;
-    private array $where = [];
     private array $join = [];
-    private array $binds = [];
 
     public static function select(string $fields = '*')
     {
@@ -26,21 +23,6 @@ class ReadQuery
     public function from(string $table)
     {
         $this->table = $table;
-
-        return $this;
-    }
-
-    public function where(string $field, string $operator, string|int $value, ?string $logic = null)
-    {
-        $fieldPlaceholder = $field;
-
-        if (str_contains($fieldPlaceholder, '.')) {
-            $fieldPlaceholder = str_replace('.', '', $fieldPlaceholder);
-        }
-
-        $this->where[] = "{$field} {$operator} :{$fieldPlaceholder} {$logic}";
-
-        $this->binds[$fieldPlaceholder] = $value;
 
         return $this;
     }
@@ -89,14 +71,6 @@ class ReadQuery
         return $query;
     }
 
-    private function executeQuery($query)
-    {
-        $connection = Connection::getConnection();
-        $prepare = $connection->prepare($query);
-        $prepare->execute($this->binds ?? []);
-
-        return $prepare;
-    }
 
 
     public function get()
@@ -138,7 +112,10 @@ class ReadQuery
         $queryToPaginate = $this->createQuery();
         $queryToPaginate .= $paginate->queryToPaginate();
 
-        $prepare = $this->executeQuery($queryToPaginate);
+        $prepare = $this->executeQuery($queryToPaginate, returnExecute:false);
+
+        // var_dump($prepare);
+        // die();
 
         return (object)['rows' => $prepare->fetchAll(), 'render' => $paginate->render()];
     }

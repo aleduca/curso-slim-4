@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\database\builder\DeleteQuery;
 use app\database\builder\InsertQuery;
 use app\database\builder\ReadQuery;
 use app\database\builder\UpdateQuery;
@@ -10,17 +11,20 @@ class Home
 {
     public function index($request, $response)
     {
-        // $users = ReadQuery::select('users.id,firstName,lastName')
-        // ->from('users')
-        // ->where('users.id', '>=', 1)
-        // ->join('posts', 'posts.user_id = users.id')
-        // ->order('users.id', 'desc')
-        // ->paginate(10)
+        $users = ReadQuery::select('users.id,firstName,lastName')
+        ->from('users')
+        ->where('users.id', '>=', 1)
+        ->join('posts', 'posts.user_id = users.id')
+        ->order('users.id', 'desc')
+        ->paginate(10);
 
         $updated = UpdateQuery::table('users')->set([
-            'firstName' => 'Joao',
+            'firstName' => 'Marcos',
             'lastName' => 'Santos',
-        ])->where('id', '=', 10)->update();
+        ])->where('id', '=', 15)->update();
+
+
+        // $deleted = DeleteQuery::table('users')->where('id', '=', 11)->delete();
 
         // $crated = InsertQuery::into('users')->insert([
         //     'firstName' => 'Alexandre',
@@ -31,7 +35,7 @@ class Home
 
         var_dump($updated);
 
-        // render('site/home', ['users' => $users, 'title' => 'Home']);
+        render('site/home', ['users' => $users, 'title' => 'Home']);
 
         return $response;
     }

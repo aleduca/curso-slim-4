@@ -2,13 +2,11 @@
 
 namespace app\database\builder;
 
-use app\database\Connection;
 use Exception;
 
-class InsertQuery
+class InsertQuery extends Builder
 {
     private string $table;
-    private array $data = [];
 
     // insert into users(firstName, lastName, email, password) values(:firstName, :lastName, :email, :password)
     public static function into(string $table)
@@ -25,29 +23,21 @@ class InsertQuery
             throw new Exception('A query precisa chamar o método into');
         }
 
-        if (!$this->data) {
+        if (!$this->binds) {
             throw new Exception('A query precisa dos dados para cadastrar');
         }
 
         $query = "insert into {$this->table}(";
-        $query .= implode(',', array_keys($this->data)) . ') VALUES(';
-        $query .= ':' . implode(',:', array_keys($this->data)) . ')';
+        $query .= implode(',', array_keys($this->binds)) . ') VALUES(';
+        $query .= ':' . implode(',:', array_keys($this->binds)) . ')';
 
         return $query;
     }
 
 
-    private function executeQuery($query)
-    {
-        $connection = Connection::getConnection();
-        $prepare = $connection->prepare($query);
-
-        return $prepare->execute($this->data);
-    }
-
     public function insert(array $data)
     {
-        $this->data = $data;
+        $this->binds = $data;
 
         $query = $this->createQuery();
 
