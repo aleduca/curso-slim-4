@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\database\builder\InsertQuery;
 use app\database\builder\ReadQuery;
+use app\database\builder\UpdateQuery;
 
 class Home
 {
@@ -14,16 +15,21 @@ class Home
         // ->where('users.id', '>=', 1)
         // ->join('posts', 'posts.user_id = users.id')
         // ->order('users.id', 'desc')
-        // ->paginate(10);
+        // ->paginate(10)
 
-        $crated = InsertQuery::into('users')->insert([
-            'firstName' => 'Alexandre',
-            'lastName' => 'Cardoso',
-            'email' => 'xandecar@hotmail.com',
-            'password' => password_hash('123', PASSWORD_DEFAULT),
-        ]);
+        $updated = UpdateQuery::table('users')->set([
+            'firstName' => 'Joao',
+            'lastName' => 'Santos',
+        ])->where('id', '=', 10)->update();
 
-        var_dump($crated);
+        // $crated = InsertQuery::into('users')->insert([
+        //     'firstName' => 'Alexandre',
+        //     'lastName' => 'Cardoso',
+        //     'email' => 'xandecar@hotmail.com',
+        //     'password' => password_hash('123', PASSWORD_DEFAULT),
+        // ]);
+
+        var_dump($updated);
 
         // render('site/home', ['users' => $users, 'title' => 'Home']);
 
