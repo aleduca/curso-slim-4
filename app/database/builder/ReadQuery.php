@@ -5,7 +5,7 @@ namespace app\database\builder;
 use app\database\Connection;
 use Exception;
 
-class Query
+class ReadQuery
 {
     private ?string $table = null;
     private ?string $fields = null;
