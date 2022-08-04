@@ -7,7 +7,7 @@
 <!-- {{ message['message']|message(message['alert'])|raw }} -->
 
 <ul>
-  <?php foreach ($users as $user): ?>
+  <?php foreach ($users->rows as $user): ?>
 
   <li>
     <?php echo $user->firstName ?> <?php echo $user->lastName ?> 
@@ -19,4 +19,7 @@
   </li>
 
     <?php endforeach ?>
+
+
+    <?php echo $users->render; ?>
 </ul>

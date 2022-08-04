@@ -68,7 +68,7 @@ class Query
     }
 
 
-    private function createQuery()
+    private function createQuery(bool $count = false)
     {
         if (!$this->fields) {
             throw new Exception('A query precisa chamar o método select');
@@ -78,15 +78,24 @@ class Query
             throw new Exception('A query precisa chamar o método from');
         }
 
-        $query = 'select ';
-        $query .= $this->fields . ' from ';
+        $query = ($count) ? 'select count(*) as count ' : 'select ';
+        $query .= (!$count) ? $this->fields . ' from ' : 'from ';
         $query .= $this->table;
-        $query .= isset($this->join) ? implode(' ', $this->join) : '';
-        $query .= isset($this->where) ? ' where ' . implode(' ', $this->where) : '';
+        $query .= !empty($this->join) ? implode(' ', $this->join) : '';
+        $query .= !empty($this->where) ? ' where ' . implode(' ', $this->where) : '';
         $query .= $this->group ?? '';
         $query .= $this->order ?? '';
 
         return $query;
+    }
+
+    private function executeQuery($query)
+    {
+        $connection = Connection::getConnection();
+        $prepare = $connection->prepare($query);
+        $prepare->execute($this->binds ?? []);
+
+        return $prepare;
     }
 
 
@@ -94,13 +103,8 @@ class Query
     {
         $query = $this->createQuery();
 
-        var_dump($query);
-        // die();
-
         try {
-            $connection = Connection::getConnection();
-            $prepare = $connection->prepare($query);
-            $prepare->execute($this->binds ?? []);
+            $prepare = $this->executeQuery($query);
 
             return $prepare->fetchAll();
         } catch (\PDOException $th) {
@@ -113,13 +117,29 @@ class Query
         $query = $this->createQuery();
 
         try {
-            $connection = Connection::getConnection();
-            $prepare = $connection->prepare($query);
-            $prepare->execute($this->binds ?? []);
+            $prepare = $this->executeQuery($query);
 
             return $prepare->fetchObject();
         } catch (\PDOException $th) {
             var_dump($th->getMessage());
         }
+    }
+
+    public function paginate(int $itemsPerPage = 10)
+    {
+        $paginate = new Paginate;
+        $paginate->setItemsPerPage($itemsPerPage);
+        $paginate->setPageIdentification('page');
+        $query = $this->createQuery(count:true);
+        $paginate->setQueryCount($query);
+        // $paginate->setLinksPerPage(10);
+        $paginate->setBinds($this->binds ?? []);
+
+        $queryToPaginate = $this->createQuery();
+        $queryToPaginate .= $paginate->queryToPaginate();
+
+        $prepare = $this->executeQuery($queryToPaginate);
+
+        return (object)['rows' => $prepare->fetchAll(), 'render' => $paginate->render()];
     }
 }
