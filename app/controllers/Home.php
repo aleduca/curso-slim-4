@@ -11,17 +11,19 @@ class Home
 {
     public function index($request, $response)
     {
+        $search = $_GET['s'] ?? '';
+
         $users = ReadQuery::select('users.id,firstName,lastName')
         ->from('users')
-        ->where('users.id', '>=', 1)
-        ->join('posts', 'posts.user_id = users.id')
+        ->where('users.id', '>=', 1, 'and')
+        ->where('firstName', 'like', "%{$search}%")
         ->order('users.id', 'desc')
         ->paginate(10);
 
-        $updated = UpdateQuery::table('users')->set([
-            'firstName' => 'Marcos',
-            'lastName' => 'Santos',
-        ])->where('id', '=', 15)->update();
+        // $updated = UpdateQuery::table('users')->set([
+        //     'firstName' => 'Marcos',
+        //     'lastName' => 'Santos',
+        // ])->where('id', '=', 15)->update();
 
 
         // $deleted = DeleteQuery::table('users')->where('id', '=', 11)->delete();
@@ -33,7 +35,7 @@ class Home
         //     'password' => password_hash('123', PASSWORD_DEFAULT),
         // ]);
 
-        var_dump($updated);
+        // var_dump($updated);
 
         render('site/home', ['users' => $users, 'title' => 'Home']);
 

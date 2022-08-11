@@ -2,6 +2,11 @@
 
 <h2>Home</h2>
 
+<form action="/" method="get">
+  <input type="text" name="s" id="" placeholder="O que deseja buscar?">
+  <button type="submit">Buscar</button>
+</form>
+
 <a href="/user/create" class="btn btn-info">Create</a>
 
 <!-- {{ message['message']|message(message['alert'])|raw }} -->

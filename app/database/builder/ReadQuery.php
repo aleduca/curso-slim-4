@@ -49,7 +49,6 @@ class ReadQuery extends Builder
         return $this;
     }
 
-
     private function createQuery(bool $count = false)
     {
         if (!$this->fields) {
@@ -67,6 +66,7 @@ class ReadQuery extends Builder
         $query .= !empty($this->where) ? ' where ' . implode(' ', $this->where) : '';
         $query .= $this->group ?? '';
         $query .= $this->order ?? '';
+
 
         return $query;
     }
@@ -104,6 +104,7 @@ class ReadQuery extends Builder
         $paginate = new Paginate;
         $paginate->setItemsPerPage($itemsPerPage);
         $paginate->setPageIdentification('page');
+
         $query = $this->createQuery(count:true);
         $paginate->setQueryCount($query);
         // $paginate->setLinksPerPage(10);
@@ -113,9 +114,6 @@ class ReadQuery extends Builder
         $queryToPaginate .= $paginate->queryToPaginate();
 
         $prepare = $this->executeQuery($queryToPaginate, returnExecute:false);
-
-        // var_dump($prepare);
-        // die();
 
         return (object)['rows' => $prepare->fetchAll(), 'render' => $paginate->render()];
     }
