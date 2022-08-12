@@ -67,7 +67,6 @@ class ReadQuery extends Builder
         $query .= $this->group ?? '';
         $query .= $this->order ?? '';
 
-
         return $query;
     }
 
@@ -77,10 +76,12 @@ class ReadQuery extends Builder
     {
         $query = $this->createQuery();
 
+        $this->query['get'][] = $query;
+
         try {
             $prepare = $this->executeQuery($query);
 
-            return $prepare->fetchAll();
+            return (object)['rows' => $prepare->fetchAll(), 'query' => $this->query];
         } catch (\PDOException $th) {
             var_dump($th->getMessage());
         }
@@ -90,31 +91,48 @@ class ReadQuery extends Builder
     {
         $query = $this->createQuery();
 
+        $this->query['first'][] = $query;
+
         try {
             $prepare = $this->executeQuery($query);
 
-            return $prepare->fetchObject();
+            return (object)['register' => $prepare->fetchObject(), 'query' => $this->query];
         } catch (\PDOException $th) {
             var_dump($th->getMessage());
         }
     }
 
-    public function paginate(int $itemsPerPage = 10)
+    private function getPaginateInstanceAndConfig(int $itemsPerPage): Paginate
     {
+        $query = $this->createQuery(count:true);
+
         $paginate = new Paginate;
         $paginate->setItemsPerPage($itemsPerPage);
         $paginate->setPageIdentification('page');
-
-        $query = $this->createQuery(count:true);
         $paginate->setQueryCount($query);
-        // $paginate->setLinksPerPage(10);
         $paginate->setBinds($this->binds ?? []);
+        // $paginate->setLinksPerPage(10);
 
+        $this->query['paginate'][] = $query;
+
+        return $paginate;
+    }
+
+    private function getQueryToPaginate(Paginate $paginate)
+    {
         $queryToPaginate = $this->createQuery();
         $queryToPaginate .= $paginate->queryToPaginate();
 
-        $prepare = $this->executeQuery($queryToPaginate, returnExecute:false);
+        $this->query['paginate'][] = $queryToPaginate;
 
-        return (object)['rows' => $prepare->fetchAll(), 'render' => $paginate->render()];
+        return $queryToPaginate;
+    }
+
+    public function paginate(int $itemsPerPage = 10)
+    {
+        $paginate = $this->getPaginateInstanceAndConfig($itemsPerPage);
+        $prepare = $this->executeQuery($this->getQueryToPaginate($paginate), returnExecute:false);
+
+        return (object)['rows' => $prepare->fetchAll(), 'render' => $paginate->render(), 'query' => $this->query];
     }
 }

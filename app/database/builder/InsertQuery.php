@@ -42,7 +42,7 @@ class InsertQuery extends Builder
         $query = $this->createQuery();
 
         try {
-            return $this->executeQuery($query);
+            return $this->executeQuery($query, returnExecute:true);
         } catch (\PDOException $th) {
             var_dump($th->getMessage());
         }

@@ -8,6 +8,7 @@ abstract class Builder
 {
     protected array $binds = [];
     protected array $where = [];
+    protected array $query = [];
 
     public function where(string $field, string $operator, string|int $value, ?string $logic = null)
     {
@@ -24,17 +25,13 @@ abstract class Builder
         return $this;
     }
 
-    protected function executeQuery($query, $returnExecute = true)
+    protected function executeQuery($query, $returnExecute = false)
     {
         $connection = Connection::getConnection();
         $prepare = $connection->prepare($query);
 
         $execute = $prepare->execute($this->binds ?? []);
 
-        if ($returnExecute) {
-            return $execute;
-        }
-
-        return $prepare;
+        return ($returnExecute) ? $execute : $prepare;
     }
 }

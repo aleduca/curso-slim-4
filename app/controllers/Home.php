@@ -20,13 +20,15 @@ class Home
         ->order('users.id', 'desc')
         ->paginate(10);
 
+        var_dump($users->query);
+
         // $updated = UpdateQuery::table('users')->set([
         //     'firstName' => 'Marcos',
         //     'lastName' => 'Santos',
-        // ])->where('id', '=', 15)->update();
+        // ])->where('id', '=', 20)->update();
 
 
-        // $deleted = DeleteQuery::table('users')->where('id', '=', 11)->delete();
+        // $deleted = DeleteQuery::table('users')->where('id', '=', 20)->delete();
 
         // $crated = InsertQuery::into('users')->insert([
         //     'firstName' => 'Alexandre',
@@ -35,7 +37,7 @@ class Home
         //     'password' => password_hash('123', PASSWORD_DEFAULT),
         // ]);
 
-        // var_dump($updated);
+        // var_dump($crated);
 
         render('site/home', ['users' => $users, 'title' => 'Home']);
 

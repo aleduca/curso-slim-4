@@ -17,7 +17,7 @@ class DeleteQuery extends Builder
     }
 
 
-    private function createQuery(bool $count = false)
+    private function createQuery()
     {
         if (!$this->table) {
             throw new Exception('A query precisa chamar o método table para deletar');
@@ -35,7 +35,7 @@ class DeleteQuery extends Builder
         $query = $this->createQuery();
 
         try {
-            return $this->executeQuery($query);
+            return $this->executeQuery($query, returnExecute:true);
         } catch (\PDOException $th) {
             var_dump($th->getMessage());
         }
